@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spam Classifier</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .input-box {
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Spam Classifier</h1>
+    <div class="input-box">
+        <label for="message">Enter your message:</label><br>
+        <textarea id="message" rows="4" cols="50"></textarea>
+    </div>
+    <button onclick="classify()">Classify</button>
+    <p id="result"></p>
+</div>
+
+<script>
+function classify() {
+    // Get the message from the textarea
+    var message = document.getElementById('message').value;
+
+    // Send the message to the server for classification (Flask connectivity)
+    fetch('/classify', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Display the classification result
+        var resultElement = document.getElementById('result');
+        if (data.is_spam) {
+            resultElement.textContent = 'This message is classified as spam.';
+        } else {
+            resultElement.textContent = 'This message is not classified as spam.';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+</script>
+</body>
+</html>
